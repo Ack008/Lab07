@@ -44,10 +44,10 @@ class TestStrictBankAccount {
      */
     @Test
     public void testManagementFees() {
-        double originalBalance = bankAccount.getBalance();
+        final double expectedBalance = bankAccount.getBalance() - StrictBankAccount.MANAGEMENT_FEE + 100 - StrictBankAccount.TRANSACTION_FEE;
         bankAccount.deposit(mRossi.getUserID(), 100.0);
         bankAccount.chargeManagementFees(mRossi.getUserID());
-        assertEquals(bankAccount.getBalance(), originalBalance - StrictBankAccount.MANAGEMENT_FEE + 100 - StrictBankAccount.TRANSACTION_FEE);
+        assertEquals(bankAccount.getBalance(), expectedBalance);
 
     }
 
@@ -56,11 +56,11 @@ class TestStrictBankAccount {
      */
     @Test
     public void testNegativeWithdraw() {
-        double beforeWithDrawAttemptsBalance = bankAccount.getBalance();
+        double expectedBalance = bankAccount.getBalance();
         try{
             bankAccount.withdraw(mRossi.getUserID(), -100.0);
         }catch(IllegalArgumentException e){
-            assertEquals(beforeWithDrawAttemptsBalance, bankAccount.getBalance());
+            assertEquals(expectedBalance, bankAccount.getBalance());
             assertNotNull(e);
             assertFalse(e.getMessage().isBlank()); 
         }
@@ -71,11 +71,11 @@ class TestStrictBankAccount {
      */
     @Test
     public void testWithdrawingTooMuch() {
-        double beforeWithDrawAttemptsBalance = bankAccount.getBalance();
+        final double expectedBalance = bankAccount.getBalance();
         try{
             bankAccount.withdraw(mRossi.getUserID(), bankAccount.getBalance() + 100);
         }catch(IllegalArgumentException e){
-            assertEquals(beforeWithDrawAttemptsBalance, bankAccount.getBalance());
+            assertEquals(expectedBalance, bankAccount.getBalance());
             assertFalse(e.getMessage().isBlank()); 
         }
     }
