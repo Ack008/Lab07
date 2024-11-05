@@ -5,52 +5,53 @@ import java.util.List;
 
 import it.unibo.inner.api.*;
 public class IterableWithPolicyImpl <T> implements IterableWithPolicy<T>{
-    private final T[] elements;
+
+    private final List<T> elements;
     private Predicate<T> filter;
+
     public IterableWithPolicyImpl(final T[] array){
-        this(array, new Predicate<T>() {
-            public boolean test(T elem) {
-                return true;
+        this(
+            array,
+            new Predicate<T>() {
+                public boolean test(T elem) {
+                    return true;
+                }
             }
-        });
+        );
     }
 
-    public IterableWithPolicyImpl(final T[] array, Predicate<T> predicate){
-        elements = array.clone();
+    public IterableWithPolicyImpl(final T[] array, final Predicate<T> predicate){
+        elements = List.of(array);
         setIterationPolicy(predicate);
     }
 
     @Override
-    public void setIterationPolicy(Predicate<T> filter) {
+    public void setIterationPolicy(final Predicate<T> filter) {
         this.filter = filter;
     }
 
     @Override
     public Iterator<T> iterator() {
-        class ArrayIterator implements Iterator<T>{
-            private List<T> filteredArrayList;
-
-            ArrayIterator(){
-                filteredArrayList = new LinkedList<>();
-                for(var elem : elements){
-                    if (filter.test(elem)){
-                        filteredArrayList.add(elem);
-                    }
-                }
-            }
-
+        return new Iterator<T>() {
+            Iterator<T> unfilteredIterator = elements.iterator();
+            T nextElementToReturn;
             @Override
             public boolean hasNext() {
-                return !filteredArrayList.isEmpty();
+                while(unfilteredIterator.hasNext()){
+                    nextElementToReturn = unfilteredIterator.next();
+                    if(filter.test(nextElementToReturn)){
+                        return true;
+                    }
+                }
+                return false;
             }
 
             @Override
             public T next() {
-                return filteredArrayList.removeFirst();
+                return nextElementToReturn;
             }
             
-        }
-        return new ArrayIterator();
+        };
     }
 
     
