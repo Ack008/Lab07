@@ -4,13 +4,12 @@ import java.util.Iterator;
 import it.unibo.inner.api.*;
 public class IterableWithPolicyImpl <T> implements IterableWithPolicy<T>{
     private final T[] elements;
-    IterableWithPolicyImpl(final T[] array){
+    public IterableWithPolicyImpl(final T[] array){
         elements = array.clone();
     }
 
     @Override
     public void setIterationPolicy(Predicate<T> filter) {
-        // TODO Auto-generated method stub
         
     }
 
