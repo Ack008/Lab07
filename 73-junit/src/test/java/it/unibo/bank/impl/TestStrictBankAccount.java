@@ -71,7 +71,7 @@ class TestStrictBankAccount {
      */
     @Test
     public void testWithdrawingTooMuch() {
-        double beforeWithDrawAttemptsBalance = bankAccount.getBalance()
+        double beforeWithDrawAttemptsBalance = bankAccount.getBalance();
         try{
             bankAccount.withdraw(mRossi.getUserID(), bankAccount.getBalance() + 100);
         }catch(IllegalArgumentException e){
