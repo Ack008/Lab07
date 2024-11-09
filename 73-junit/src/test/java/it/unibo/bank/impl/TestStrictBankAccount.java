@@ -56,7 +56,7 @@ class TestStrictBankAccount {
      */
     @Test
     public void testNegativeWithdraw() {
-        double expectedBalance = bankAccount.getBalance();
+        final double expectedBalance = bankAccount.getBalance();
         try{
             bankAccount.withdraw(mRossi.getUserID(), -100.0);
         }catch(IllegalArgumentException e){
