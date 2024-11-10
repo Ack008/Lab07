@@ -40,7 +40,7 @@ public final class MonthSorterNested implements MonthSorter {
             return dayOfTheMonth;
         }
     }
-    public Month fromString(String monthString){
+    public static Month fromString(String monthString){
         monthString = monthString.toLowerCase();
         final TreeMap<String, Month> mappa = new TreeMap<>(){{
             put("january",Month.JANUARY);
@@ -70,27 +70,32 @@ public final class MonthSorterNested implements MonthSorter {
         return mappa.get(possibleKeyList.remove(0));
     }
 
+    public final static class SortByDays implements Comparator<String>{
+        @Override
+        public int compare(String o1, String o2){
+            int d1 = fromString(o1).getDayOfTheMonth();
+            int d2 = fromString(o2).getDayOfTheMonth();
+            return d1 - d2;
+        }
+    }
+
+    public final static class SortByMonthOrder implements Comparator<String>{
+        @Override 
+        public int compare(String o1, String o2){
+            int p1 = fromString(o1).getPositionInTime();
+            int p2 = fromString(o2).getPositionInTime();
+            return p1 - p2;
+        }
+    }
+
+
     @Override
     public Comparator<String> sortByDays() {
-        return new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2){
-                int d1 = fromString(o1).getDayOfTheMonth();
-                int d2 = fromString(o2).getDayOfTheMonth();
-                return d1 - d2;
-            }
-        };
+        return new SortByDays();
     }
 
     @Override
     public Comparator<String> sortByOrder() {
-        return new Comparator<String>() {
-            @Override 
-            public int compare(String o1, String o2){
-                int p1 = fromString(o1).getPositionInTime();
-                int p2 = fromString(o2).getPositionInTime();
-                return p1 - p2;
-            }
-        };
+        return new SortByMonthOrder();
     }
 }
