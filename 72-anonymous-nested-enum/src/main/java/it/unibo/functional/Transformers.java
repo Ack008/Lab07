@@ -99,7 +99,13 @@ public final class Transformers {
      * @param <I> elements type
      */
     public static <I> List<I> select(final Iterable<I> base, final Function<I, Boolean> test) {
-        return null;
+        final List<I> selectedItemList = new LinkedList<>();
+        for(var elem : base){
+            if(test.call(elem)){
+                selectedItemList.add(elem);
+            }
+        }
+        return selectedItemList;
     }
 
     /**
