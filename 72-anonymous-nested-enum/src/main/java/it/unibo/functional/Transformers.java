@@ -2,6 +2,7 @@ package it.unibo.functional;
 
 import it.unibo.functional.api.Function;
 
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -55,12 +56,11 @@ public final class Transformers {
      * @param <O> output elements type
      */
     public static <I, O> List<O> transform(final Iterable<I> base, final Function<I, O> transformer) {
-        final List<O> transformedList = new LinkedList<>();
-        for(final var elem : base){
-            transformedList.add(transformer.call(elem));
-        }
-
-        return transformedList;
+        return flattenTransform(base, new Function<I,Collection<? extends O>>() {
+            public Collection<O> call(I input){
+                return List.of(transformer.call(input));
+            }
+        });
     }
 
     /**
@@ -76,13 +76,7 @@ public final class Transformers {
      * @param <I> type of the collection elements
      */
     public static <I> List<? extends I> flatten(final Iterable<? extends Collection<? extends I>> base) {
-        final List<I> trasformedList = new LinkedList<>();
-        for(Collection<?extends I> collection : base){
-            for(I elem : collection){
-                trasformedList.add(elem);
-            }
-        }
-        return trasformedList;
+        return flattenTransform(base, Function.identity());
     }
 
     /**
@@ -99,13 +93,11 @@ public final class Transformers {
      * @param <I> elements type
      */
     public static <I> List<I> select(final Iterable<I> base, final Function<I, Boolean> test) {
-        final List<I> selectedItemList = new LinkedList<>();
-        for(var elem : base){
-            if(test.call(elem)){
-                selectedItemList.add(elem);
+       return flattenTransform(base, new Function<I,Collection<? extends I>>() {
+            public Collection<I> call(I input){
+                return test.call(input) ? List.of(input) : List.of();
             }
-        }
-        return selectedItemList;
+       });
     }
 
     /**
@@ -121,6 +113,10 @@ public final class Transformers {
      * @param <I> elements type
      */
     public static <I> List<I> reject(final Iterable<I> base, final Function<I, Boolean> test) {
-        return null;
+        return select(base, new Function<I,Boolean>() {
+            public Boolean call(I input){
+                return !test.call(input);
+            }
+        });
     }
 }
