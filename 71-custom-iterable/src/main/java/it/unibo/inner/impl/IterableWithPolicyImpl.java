@@ -1,6 +1,5 @@
 package it.unibo.inner.impl;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import it.unibo.inner.api.*;
